@@ -14,16 +14,16 @@ TagManager:
   - 
   - 
   - 
+  - Obstacle
+  - 
+  - Walkable
   - 
   - 
+  - Player
   - 
+  - Enemy
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Object
   - 
   - 
   - 
