@@ -5,7 +5,7 @@ using UnityEngine;
 public class MapControl : MonoBehaviour
 {
     [SerializeField]
-    private ChaserSystem enemyChaserPrefab;
+    private ObjectsPooling enemyChaserPool;
     [SerializeField]
     private Transform playerTransform;
     [SerializeField]
@@ -13,39 +13,38 @@ public class MapControl : MonoBehaviour
     [SerializeField]
     private float spawnInterval = 2f; // Time in seconds between spawns
 
-    private List<ChaserSystem> enemiesSpawned = new List<ChaserSystem>();
+    private List<EnemyModel> enemiesSpawned = new List<EnemyModel>();
+    private List<Matrix4x4> enemyMatrices = new List<Matrix4x4>();
+
     // Start is called before the first frame update
     void Start()
     {
-        Init();
+        //Init();
     }
 
     private void Init()
     {
-        if (enemiesSpawned != null)
+        if (enemyChaserPool == null || playerTransform == null || spawnList.Count == 0)
         {
-            foreach (var enemy in enemiesSpawned)
-            {
-                if (enemy != null)
-                {
-                    Destroy(enemy.gameObject);
-                }
-            }
+            Debug.LogError("Enemy pool, player transform or spawn list is not set!");
+            return;
         }
-        enemiesSpawned = new List<ChaserSystem>();
+        enemiesSpawned = new List<EnemyModel>();
+        enemyChaserPool.Init();
+    }
+
+    private void RenderEnemies()
+    {
+        
     }
 
     private void SpawnEnemy()
     {
-        if (enemyChaserPrefab == null || playerTransform == null || spawnList.Count == 0)
-        {
-            Debug.LogError("Enemy prefab, player transform or spawn list is not set!");
-            return;
-        }
+        GameObject enemyObject = enemyChaserPool.GetObject();
         Transform spawnPoint = spawnList[Random.Range(0, spawnList.Count)];
-        ChaserSystem newEnemy = Instantiate(enemyChaserPrefab, spawnPoint.position, Quaternion.identity);
-        newEnemy.Init();
-        newEnemy.SetTarget(playerTransform);
+        enemyObject.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
+        EnemyModel newEnemy = enemyObject.GetComponent<EnemyModel>();
+        newEnemy.Init(playerTransform);
         enemiesSpawned.Add(newEnemy);
     }
 
@@ -55,7 +54,7 @@ public class MapControl : MonoBehaviour
     {
         if (spawnTimer <= 0)
         {
-            SpawnEnemy();
+            //SpawnEnemy();
             spawnTimer = spawnInterval;
         }
         else
