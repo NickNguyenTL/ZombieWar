@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8530103076005791775}
   - component: {fileID: 4203644404241386492}
-  - component: {fileID: 3089143347275393269}
   - component: {fileID: 5514772455606711350}
+  - component: {fileID: 3089143347275393269}
   - component: {fileID: 7371217223287617681}
   - component: {fileID: 4813827694556001469}
   m_Layer: 16
@@ -59,22 +59,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!114 &3089143347275393269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1019312895322609927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e31dc0018e398642b6c2d4334f37772, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chaseDistance: 20
-  stopDistance: 0
-  updateRate: 0.1
-  stopWhenReached: 0
 --- !u!65 &5514772455606711350
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -96,6 +80,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &3089143347275393269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019312895322609927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e31dc0018e398642b6c2d4334f37772, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseDistance: 20
+  stopDistance: 0
+  updateRate: 0.1
+  stopWhenReached: 0
 --- !u!114 &7371217223287617681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,10 +110,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
   chaserSystem: {fileID: 3089143347275393269}
-  mesh: {fileID: 0}
   isHitTintColor:
     serializedVersion: 2
-    rgba: 255
+    rgba: 4280624545
+  isNormalTintColor:
+    serializedVersion: 2
+    rgba: 4294967295
   vatAnimator: {fileID: 4813827694556001469}
 --- !u!114 &4813827694556001469
 MonoBehaviour:

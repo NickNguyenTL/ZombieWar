@@ -68,36 +68,49 @@ public class VAT_Animator : MonoBehaviour
     private void UpdateVAT_AnimFrame()
     {
         var anim = animList[currentAnim];
-        animTime += Time.deltaTime;
         float animLength = anim.frameCount / (float)anim.sampleRate;
-        if (animTime > animLength)
+        if (animTime < animLength)
         {
-            animTime = 0f; // Loop
-            OnAnimEnd?.Invoke(currentAnim);
+            animTime += Time.deltaTime;            
+        }
+        else
+        {
+            if(isRepeating)
+            {
+                animTime = 0f; // Loop 
+            }
+            else
+            {
+                animTime = animLength; // Stop at the end
+                OnAnimEnd?.Invoke(currentAnim);
+            }
         }
 
         // Calculate current frame within this animation
         float frameInAnim = animTime * anim.sampleRate;
         float frame = anim.startFrame + frameInAnim;
 
+        Debug.Log("Update: " + anim.startFrame + " | " + frameInAnim + " | " + frame);
+
         mpb.SetFloat("_CurrentFrame", frame);
         meshRenderer.SetPropertyBlock(mpb);
     }
 
     // Call this to play a specific animation by name
-    public void Play(string animName)
+    public void Play(string animName, bool repeat = true)
     {
         for (int i = 0; i < animList.Count; i++)
         {
             if (animList[i].name == animName)
             {
-                Play(i);
+                Play(i, repeat);
                 break;
             }
         }
     }
 
-    public void Play(int Id, bool forceRepeat = true)
+    bool isRepeating;
+    public void Play(int Id, bool repeat = true, bool forceRepeat = true)
     {
         if(Id < animList.Count)
         {
@@ -106,7 +119,12 @@ public class VAT_Animator : MonoBehaviour
                 OnAnimEnd?.Invoke(currentAnim);
                 currentAnim = Id;
                 animTime = 0f;
-            }            
+            }
+            isRepeating = repeat;
+
+            var anim = animList[currentAnim];
+            float animLength = anim.frameCount / (float)anim.sampleRate;
+            Debug.Log($"Playing Animation: {anim.name} | Start Frame: {anim.startFrame} | Frame Count: {anim.frameCount} | Sample Rate: {anim.sampleRate} | Length: {animLength}s");
         }
     }
     #endregion
@@ -119,7 +137,7 @@ public class VAT_Animator : MonoBehaviour
             mpb = new MaterialPropertyBlock();
         }
 
-        mpb.SetColor("_TintColor", color);
+        mpb.SetColor("_Color", color);
         meshRenderer.SetPropertyBlock(mpb);
     }
 

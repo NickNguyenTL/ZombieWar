@@ -7,8 +7,8 @@ public class EnemyModel : MonoBehaviour
     public enum EnemyState
     {
         Idle = 0,
-        Chase = 1,
-        Hit = 2,
+        Hit = 1,
+        Chase = 2,        
         Dead = 3,
     }
 
@@ -37,6 +37,7 @@ public class EnemyModel : MonoBehaviour
         {
             chaserSystem.Init();
             chaserSystem.SetTarget(target);
+            chaserSystem.OnChaseStateChanged += OnChaseStateChange;
         }
 
         if (vatAnimator != null)
@@ -63,14 +64,16 @@ public class EnemyModel : MonoBehaviour
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
             case EnemyState.Hit:
-                vatAnimator.Play((int)EnemyState.Hit);
+                vatAnimator.Play((int)EnemyState.Hit, false);
                 vatAnimator.SetTintColor(isHitTintColor);
                 break;
             case EnemyState.Dead:
-                vatAnimator.Play((int)EnemyState.Dead);
+                vatAnimator.Play((int)EnemyState.Dead, false);
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
         }
+
+        Debug.Log("Set Anim State: " + newState.ToString());
     }
 
     private void OnEndAnimTrigger(int animId)
@@ -89,11 +92,28 @@ public class EnemyModel : MonoBehaviour
         }
     }
 
+    private void OnChaseStateChange(bool isChasing)
+    {
+        if (isChasing)
+        {
+            SetAnimState(EnemyState.Chase);
+        }
+        else
+        {
+            SetAnimState(EnemyState.Idle);
+        }
+    }
+
     private void OnDestroy()
     {
         if (vatAnimator != null)
         {
             vatAnimator.OnAnimEnd -= OnEndAnimTrigger;
+        }
+
+        if(chaserSystem != null)
+        {
+            chaserSystem.OnChaseStateChanged -= OnChaseStateChange;
         }
     }
 }

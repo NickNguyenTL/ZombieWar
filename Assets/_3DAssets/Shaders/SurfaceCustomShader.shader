@@ -26,8 +26,9 @@ Shader "Custom/SurfaceCustomShader" {
       CGPROGRAM
     // Physically based Standard lighting model, and enable shadows on all light types
     #pragma surface surf Standard fullforwardshadows vertex:vert
-      // Use shader model 3.0 target, to get nicer looking lighting
+    // Use shader model 3.0 target, to get nicer looking lighting
     #pragma target 3.0
+    //Support GPU Instancing
     #pragma multi_compile_instancing
 
     sampler2D _MaskTex;            
@@ -45,17 +46,14 @@ Shader "Custom/SurfaceCustomShader" {
     half _Metallic;
     fixed4 _EmissionColor;
     float _Emission;
-    fixed4 _Color;
 
     //Dissolve properties
 	sampler2D _DissolveTexture;
-	half _Amount;
 
     // VAT properties
     sampler2D _VATTex;
     float _VertexCount;
     float _FrameCount;
-    float _CurrentFrame;
     float3 _AABBMin;
     float3 _AABBMax;
 

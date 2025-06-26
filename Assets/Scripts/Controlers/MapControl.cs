@@ -19,7 +19,7 @@ public class MapControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Init();
+        Init();
     }
 
     private void Init()
@@ -31,11 +31,6 @@ public class MapControl : MonoBehaviour
         }
         enemiesSpawned = new List<EnemyModel>();
         enemyChaserPool.Init();
-    }
-
-    private void RenderEnemies()
-    {
-        
     }
 
     private void SpawnEnemy()
@@ -54,7 +49,7 @@ public class MapControl : MonoBehaviour
     {
         if (spawnTimer <= 0)
         {
-            //SpawnEnemy();
+            SpawnEnemy();
             spawnTimer = spawnInterval;
         }
         else
