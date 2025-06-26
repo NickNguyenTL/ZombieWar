@@ -8,6 +8,9 @@ public class ObjectsPooling : MonoBehaviour
     private int initialPoolSize = 10; // Initial size of the pool
     [SerializeField]
     private GameObject objectPrefab; // Prefab to pool
+    [SerializeField]
+    private Transform parentTransform; // Parent transform for pooled objects
+
     private Queue<GameObject> inactiveObjects = new Queue<GameObject>();
     private List<GameObject> activeObjects = new List<GameObject>();
 
@@ -18,10 +21,11 @@ public class ObjectsPooling : MonoBehaviour
             Debug.LogError("Object prefab is not set!");
             return;
         }
+
         // Initialize the pool with inactive objects
         for (int i = 0; i < initialPoolSize; i++)
         {
-            GameObject obj = Instantiate(objectPrefab);
+            GameObject obj = Instantiate(objectPrefab, parentTransform);
             obj.SetActive(false);
             inactiveObjects.Enqueue(obj);
         }
@@ -37,7 +41,7 @@ public class ObjectsPooling : MonoBehaviour
         }
         else
         {
-            getObject = Instantiate(objectPrefab);
+            getObject = Instantiate(objectPrefab, parentTransform);
         }
         activeObjects.Add(getObject);
         return getObject;

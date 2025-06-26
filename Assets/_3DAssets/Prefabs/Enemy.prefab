@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3089143347275393269}
   - component: {fileID: 5514772455606711350}
   - component: {fileID: 7371217223287617681}
+  - component: {fileID: 4813827694556001469}
   m_Layer: 16
   m_Name: Enemy
   m_TagString: Untagged
@@ -109,8 +110,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
   chaserSystem: {fileID: 3089143347275393269}
-  vatMaterial: {fileID: 2100000, guid: 355325254e820024ab5bb6de6e5f3486, type: 2}
+  mesh: {fileID: 0}
+  isHitTintColor:
+    serializedVersion: 2
+    rgba: 255
+  vatAnimator: {fileID: 4813827694556001469}
+--- !u!114 &4813827694556001469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019312895322609927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05255d2ae467c674282b1732fcbf93ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshRenderer: {fileID: 2506458333199432885}
   vatMeta: {fileID: 4900000, guid: 0f4f25b2abaf47b4bb3f20d1eab84ab4, type: 3}
+  vatMaterial: {fileID: 2100000, guid: 355325254e820024ab5bb6de6e5f3486, type: 2}
 --- !u!1 &4290524539564066384
 GameObject:
   m_ObjectHideFlags: 0

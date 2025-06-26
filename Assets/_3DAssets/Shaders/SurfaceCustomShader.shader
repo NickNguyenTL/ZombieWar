@@ -28,6 +28,7 @@ Shader "Custom/SurfaceCustomShader" {
     #pragma surface surf Standard fullforwardshadows vertex:vert
       // Use shader model 3.0 target, to get nicer looking lighting
     #pragma target 3.0
+    #pragma multi_compile_instancing
 
     sampler2D _MaskTex;            
     sampler2D _BumpMap;     
@@ -62,7 +63,9 @@ Shader "Custom/SurfaceCustomShader" {
     // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
     // #pragma instancing_options assumeuniformscaling
     UNITY_INSTANCING_BUFFER_START(Props)
-        // put more per-instance properties here
+        UNITY_DEFINE_INSTANCED_PROP(float, _CurrentFrame)
+        UNITY_DEFINE_INSTANCED_PROP(float, _Amount)
+        UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
     UNITY_INSTANCING_BUFFER_END(Props)
 
     // Custom appdata with vertex index in TEXCOORD1.x
@@ -87,9 +90,10 @@ Shader "Custom/SurfaceCustomShader" {
             return;  
         }
         float vertexIndex = v.texcoord1.x;
+        float currentFrame = UNITY_ACCESS_INSTANCED_PROP(Props, _CurrentFrame);
         float2 vatUV;
         vatUV.x = (vertexIndex + 0.5) / _VertexCount;
-        vatUV.y = (_CurrentFrame + 0.5) / _FrameCount;
+        vatUV.y = (currentFrame + 0.5) / _FrameCount;
 
         float3 normPos = tex2Dlod(_VATTex, float4(vatUV, 0, 0)).rgb;
         float3 animatedPos = lerp(_AABBMin, _AABBMax, normPos);
@@ -100,10 +104,12 @@ Shader "Custom/SurfaceCustomShader" {
     void surf (Input IN, inout SurfaceOutputStandard o) 
     {
         //Dissolve function
+        float dissolveAmount = UNITY_ACCESS_INSTANCED_PROP(Props, _Amount);
 		half dissolve_value = tex2D(_DissolveTexture, IN.uv_MainTex).r;
-		clip(dissolve_value - _Amount);
+		clip(dissolve_value - dissolveAmount);
         
-        fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+        fixed4 tintColor = UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+        fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * tintColor;
         o.Albedo = c.rgb;
         o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
