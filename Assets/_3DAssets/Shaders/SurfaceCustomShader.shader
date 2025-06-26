@@ -17,6 +17,8 @@ Shader "Custom/SurfaceCustomShader" {
         _VertexCount ("Vertex Count", Float) = 0
         _FrameCount ("Frame Count", Float) = 0
         _CurrentFrame ("Current Frame", Float) = 0
+        _AABBMin ("AABB Min", Vector) = (0,0,0,0)
+        _AABBMax ("AABB Max", Vector) = (1,1,1,0)
     }
     SubShader {
       //Tags { "RenderType" = "Opaque" }
@@ -53,6 +55,8 @@ Shader "Custom/SurfaceCustomShader" {
     float _VertexCount;
     float _FrameCount;
     float _CurrentFrame;
+    float3 _AABBMin;
+    float3 _AABBMax;
 
     // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
     // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -87,8 +91,8 @@ Shader "Custom/SurfaceCustomShader" {
         vatUV.x = (vertexIndex + 0.5) / _VertexCount;
         vatUV.y = (_CurrentFrame + 0.5) / _FrameCount;
 
-        float4 vatSample = tex2Dlod(_VATTex, float4(vatUV, 0, 0));
-        float3 animatedPos = vatSample.rgb;
+        float3 normPos = tex2Dlod(_VATTex, float4(vatUV, 0, 0)).rgb;
+        float3 animatedPos = lerp(_AABBMin, _AABBMax, normPos);
 
         v.vertex.xyz = animatedPos;
     }

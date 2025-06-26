@@ -8,47 +8,40 @@ public class EnemyModel : MonoBehaviour
     private EnemyData enemyData;
     [SerializeField]
     private ChaserSystem chaserSystem;
+    [SerializeField]
+    private Material vatMaterial; // Material to visualize VAT
 
     [Header("VAT Zone")]
     [SerializeField]
-    public Mesh mesh;
-    [SerializeField]
-    private Texture2D vatTexture;
-    [SerializeField]
-    private Material vatMaterial;
-    [SerializeField]
     private TextAsset vatMeta;    // Metadata file generated during baking
 
-    public void Init(Transform target = null)
+    private void InitVAT_Data()
     {
-        if (mesh != null && vatTexture != null && vatMaterial != null)
-        {
-            vatMaterial.SetTexture("_VATTex", vatTexture);
-            vatMaterial.SetFloat("_VertexCount", mesh.vertexCount);
-            vatMaterial.SetFloat("_FrameCount", vatTexture.height);
-
-            Vector2[] texcoord1 = new Vector2[mesh.vertexCount];
-            for (int i = 0; i < mesh.vertexCount; i++)
-                texcoord1[i] = new Vector2(i, 0);
-            mesh.uv2 = texcoord1;
-        }
 
         // Parse metadata (format: name,startFrame,frameCount,sampleRate)
         var lines = vatMeta.text.Split('\n');
-        animations = new AnimationInfo[lines.Length];
-        for (int i = 0; i < lines.Length; i++)
+        animList = new List<AnimationInfo>();
+        int vertexCount = int.Parse(lines[0].Split(',')[0]);
+        for (int i = 2; i < lines.Length; i++)
         {
             if (string.IsNullOrWhiteSpace(lines[i])) continue;
             var parts = lines[i].Split(',');
-            animations[i] = new AnimationInfo
+            if (parts.Length >= 4)
             {
-                name = parts[0],
-                startFrame = int.Parse(parts[1]),
-                frameCount = int.Parse(parts[2]),
-                sampleRate = int.Parse(parts[3])
-            };
+                animList.Add(new AnimationInfo
+                {
+                    name = parts[0],
+                    startFrame = int.Parse(parts[1]),
+                    frameCount = int.Parse(parts[2]),
+                    sampleRate = int.Parse(parts[3])
+                });
+            }
         }
+    }
 
+    public void Init(Transform target = null)
+    {
+        InitVAT_Data();
 
         if (target != null)
         {
@@ -66,7 +59,7 @@ public class EnemyModel : MonoBehaviour
         public int sampleRate;
     }
 
-    private AnimationInfo[] animations;
+    private List<AnimationInfo> animList;
     private int currentAnim = 0;
     private float animTime = 0f;
 
@@ -78,14 +71,14 @@ public class EnemyModel : MonoBehaviour
         }
         Init();
         
-        Play(animations[0].name); // Start with the first animation
+        Play(animList[1].name); // Start with the first animation
     }
 
     void Update()
     {
-        if (animations == null || animations.Length == 0) return;
+        if (animList == null || animList.Count == 0) return;
 
-        var anim = animations[currentAnim];
+        var anim = animList[currentAnim];
         animTime += Time.deltaTime;
         float animLength = anim.frameCount / (float)anim.sampleRate;
         if (animTime > animLength)
@@ -103,9 +96,9 @@ public class EnemyModel : MonoBehaviour
     // Call this to play a specific animation by name
     public void Play(string animName)
     {
-        for (int i = 0; i < animations.Length; i++)
+        for (int i = 0; i < animList.Count; i++)
         {
-            if (animations[i].name == animName)
+            if (animList[i].name == animName)
             {
                 currentAnim = i;
                 animTime = 0f;

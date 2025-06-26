@@ -1,4 +1,0 @@
-Zombie@Idle01,0,77,30
-Zombie@Death01_A,77,40,30
-Zombie@Damage01,117,15,30
-Zombie@Walk01,132,44,30

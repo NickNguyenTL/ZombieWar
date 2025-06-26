@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ZombieMaterial
-  m_Shader: {fileID: 4800000, guid: 8c04e7f38e0df8840ace7d25b4b40f12, type: 3}
+  m_Name: ZombieMaterial_Org
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -75,12 +75,12 @@ Material:
     m_Floats:
     - _Amount: 0
     - _BumpScale: 1
-    - _CurrentFrame: 204.55933
+    - _CurrentFrame: 62.31878
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Emission: 0
-    - _FrameCount: 128
+    - _FrameCount: 64
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
