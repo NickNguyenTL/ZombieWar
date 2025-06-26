@@ -84,8 +84,8 @@ public class VATBaker : EditorWindow
 
         // Prepare texture
         Debug.Log("Initialize Texture: " + vertexCount + " x " + totalFrames);
-        Texture2D vatTexture = new Texture2D(vertexCount, totalFrames, TextureFormat.RGBAHalf, false, true);
-        vatTexture.wrapMode = TextureWrapMode.Clamp;
+        Texture2D vatTextureIns = new Texture2D(vertexCount, totalFrames, TextureFormat.RGBAHalf, false, true);
+        vatTextureIns.wrapMode = TextureWrapMode.Clamp;
 
         Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
         Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
@@ -135,19 +135,19 @@ public class VATBaker : EditorWindow
                         (pos.y - min.y) / (max.y - min.y),
                         (pos.z - min.z) / (max.z - min.z)
                     );
-                    vatTexture.SetPixel(v, frameIndex, new Color(normalized.x, normalized.y, normalized.z, 1));
+                    vatTextureIns.SetPixel(v, frameIndex, new Color(normalized.x, normalized.y, normalized.z, 1));
                 }
                 frameIndex++;
             }
         }
 
-        vatTexture.Apply();
+        vatTextureIns.Apply();
 
         // Save texture
         string path = EditorUtility.SaveFilePanel("Save VAT Texture", "Assets", "VAT_Texture.png", "png");
         if (!string.IsNullOrEmpty(path))
         {
-            File.WriteAllBytes(path, vatTexture.EncodeToPNG());
+            File.WriteAllBytes(path, vatTextureIns.EncodeToPNG());
             AssetDatabase.Refresh();
             Debug.Log("VAT Texture saved to: " + path);
         }
@@ -166,6 +166,10 @@ public class VATBaker : EditorWindow
             }
         }
         Debug.Log("VAT metadata saved to: " + metaPath);
+
+        //Set the created texture and metadata on the Editor
+        vatTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        vatMeta = AssetDatabase.LoadAssetAtPath<TextAsset>(metaPath);
 
         // Create or update VAT material
         if (vatMaterial != null)
