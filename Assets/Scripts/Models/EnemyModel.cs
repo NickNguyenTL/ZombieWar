@@ -56,11 +56,11 @@ public class EnemyModel : MonoBehaviour
         switch (newState)
         {
             case EnemyState.Idle:
-                vatAnimator.Play((int)EnemyState.Idle);
+                vatAnimator.Play((int)EnemyState.Idle, true, false);
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
             case EnemyState.Chase:
-                vatAnimator.Play((int)EnemyState.Chase);
+                vatAnimator.Play((int)EnemyState.Chase, true, false);
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
             case EnemyState.Hit:
@@ -68,7 +68,7 @@ public class EnemyModel : MonoBehaviour
                 vatAnimator.SetTintColor(isHitTintColor);
                 break;
             case EnemyState.Dead:
-                vatAnimator.Play((int)EnemyState.Dead, false);
+                vatAnimator.Play((int)EnemyState.Dead, false, false);
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
         }

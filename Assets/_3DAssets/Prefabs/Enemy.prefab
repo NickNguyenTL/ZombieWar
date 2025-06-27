@@ -112,7 +112,7 @@ MonoBehaviour:
   chaserSystem: {fileID: 3089143347275393269}
   isHitTintColor:
     serializedVersion: 2
-    rgba: 4280624545
+    rgba: 4288256497
   isNormalTintColor:
     serializedVersion: 2
     rgba: 4294967295

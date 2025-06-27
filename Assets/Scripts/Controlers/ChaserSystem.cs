@@ -27,8 +27,11 @@ public class ChaserSystem: MonoBehaviour
         get => isChasing;
         private set
         {
-            OnChaseStateChanged?.Invoke(value);
-            isChasing = value;
+            if(isChasing != value)
+            {
+                OnChaseStateChanged?.Invoke(value);
+                isChasing = value;
+            }            
         }
     }
     private Transform target;
@@ -46,7 +49,7 @@ public class ChaserSystem: MonoBehaviour
 
         // Set the stopping distance
         agent.stoppingDistance = stopDistance;
-        isChasing = false;
+        IsChasing = false;
     }    
 
     void Update()
@@ -102,16 +105,16 @@ public class ChaserSystem: MonoBehaviour
         if (agent != null)
         {
             agent.isStopped = false;
-            isChasing = true;
+            IsChasing = true;
         }
     }
 
     void StopChasing()
     {
-        if (agent != null && isChasing)
+        if (agent != null && IsChasing)
         {
             agent.isStopped = true;
-            isChasing = false;
+            IsChasing = false;
         }
     }
 

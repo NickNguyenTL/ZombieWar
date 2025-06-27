@@ -90,7 +90,7 @@ public class VAT_Animator : MonoBehaviour
         float frameInAnim = animTime * anim.sampleRate;
         float frame = anim.startFrame + frameInAnim;
 
-        Debug.Log("Update: " + anim.startFrame + " | " + frameInAnim + " | " + frame);
+        //Debug.Log("Update: " + anim.startFrame + " | " + frameInAnim + " | " + frame);
 
         mpb.SetFloat("_CurrentFrame", frame);
         meshRenderer.SetPropertyBlock(mpb);
@@ -124,7 +124,7 @@ public class VAT_Animator : MonoBehaviour
 
             var anim = animList[currentAnim];
             float animLength = anim.frameCount / (float)anim.sampleRate;
-            Debug.Log($"Playing Animation: {anim.name} | Start Frame: {anim.startFrame} | Frame Count: {anim.frameCount} | Sample Rate: {anim.sampleRate} | Length: {animLength}s");
+            //Debug.Log($"Playing Animation: {anim.name} | Start Frame: {anim.startFrame} | Frame Count: {anim.frameCount} | Sample Rate: {anim.sampleRate} | Length: {animLength}s");
         }
     }
     #endregion
