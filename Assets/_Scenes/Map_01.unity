@@ -1270,6 +1270,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2823841958521946876, guid: 87c1a8fe7383d8949bcff4dfbe196ab3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 161039900}
+    - targetCorrespondingSourceObject: {fileID: 2823841958521946876, guid: 87c1a8fe7383d8949bcff4dfbe196ab3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 161039903}
   m_SourcePrefab: {fileID: 100100000, guid: 87c1a8fe7383d8949bcff4dfbe196ab3, type: 3}
 --- !u!4 &161039897 stripped
 Transform:
@@ -1298,7 +1301,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -1322,6 +1325,27 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 0
   m_AffectedAgents: 00000000
+--- !u!65 &161039903
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161039898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7268515, y: 1.4894155, z: 2.0370176}
+  m_Center: {x: 0.050477505, y: 0.6945655, z: -0.24391782}
 --- !u!1 &174891819
 GameObject:
   m_ObjectHideFlags: 0
@@ -6273,7 +6297,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.083333336
   m_MinRegionArea: 10
-  m_NavMeshData: {fileID: 23800000, guid: 16d3b503a1c52d745b06009a3213815b, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 1fea9ce820fce9240b2a6973dbc98fda, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1001 &1190621124
 PrefabInstance:
