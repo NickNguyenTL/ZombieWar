@@ -23,8 +23,20 @@ public class EnemyModel : MonoBehaviour
 
     [SerializeField]
     private VAT_Animator vatAnimator;
+    [SerializeField]
+    private bool InitOnStart;
+    [SerializeField]
+    private EnemyState InitState;
 
     private EnemyState enemyState;
+
+    private void Start()
+    {
+        if (InitOnStart)
+        {
+            Init();
+        }
+    }
 
     public void Init(Transform target = null)
     {
@@ -46,7 +58,7 @@ public class EnemyModel : MonoBehaviour
             vatAnimator.OnAnimEnd += OnEndAnimTrigger;
         }
 
-        SetAnimState(EnemyState.Idle);
+        SetAnimState(InitState);
     }
 
     public void SetAnimState(EnemyState newState)
@@ -64,11 +76,11 @@ public class EnemyModel : MonoBehaviour
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
             case EnemyState.Hit:
-                vatAnimator.Play((int)EnemyState.Hit, false);
+                vatAnimator.Play((int)EnemyState.Hit, true);
                 vatAnimator.SetTintColor(isHitTintColor);
                 break;
             case EnemyState.Dead:
-                vatAnimator.Play((int)EnemyState.Dead, false, false);
+                vatAnimator.Play((int)EnemyState.Dead, true, false);
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
         }

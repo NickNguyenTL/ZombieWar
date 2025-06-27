@@ -71,13 +71,13 @@ public class VAT_Animator : MonoBehaviour
         float animLength = anim.frameCount / (float)anim.sampleRate;
         if (animTime < animLength)
         {
-            animTime += Time.deltaTime;            
+            animTime = Mathf.Clamp(animTime + Time.deltaTime, 0, animLength);            
         }
         else
         {
             if(isRepeating)
             {
-                animTime = 0f; // Loop 
+                animTime = 0; // Loop 
             }
             else
             {
@@ -88,9 +88,9 @@ public class VAT_Animator : MonoBehaviour
 
         // Calculate current frame within this animation
         float frameInAnim = animTime * anim.sampleRate;
-        float frame = anim.startFrame + frameInAnim;
+        float frame = Mathf.Clamp(anim.startFrame + frameInAnim, anim.startFrame, anim.startFrame + anim.frameCount - 1) ;
 
-        //Debug.Log("Update: " + anim.startFrame + " | " + frameInAnim + " | " + frame);
+        //Debug.Log("Update: " + anim.startFrame + " | " + anim.frameCount + " | " + frameInAnim + " | " + frame);
 
         mpb.SetFloat("_CurrentFrame", frame);
         meshRenderer.SetPropertyBlock(mpb);
