@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class VAT_Animator : MonoBehaviour
@@ -121,10 +122,6 @@ public class VAT_Animator : MonoBehaviour
                 animTime = 0f;
             }
             isRepeating = repeat;
-
-            var anim = animList[currentAnim];
-            float animLength = anim.frameCount / (float)anim.sampleRate;
-            //Debug.Log($"Playing Animation: {anim.name} | Start Frame: {anim.startFrame} | Frame Count: {anim.frameCount} | Sample Rate: {anim.sampleRate} | Length: {animLength}s");
         }
     }
     #endregion
@@ -141,7 +138,7 @@ public class VAT_Animator : MonoBehaviour
         meshRenderer.SetPropertyBlock(mpb);
     }
 
-    float dissolveValue = 0f;
+    float dissolveValue = 0f;   
     /// <summary>
     /// Set dissolve state of the VAT material.
     /// </summary>
@@ -153,19 +150,22 @@ public class VAT_Animator : MonoBehaviour
     /// </param>
     public void SetDisolve(bool state, float time = 0)
     {
-        float endValue = state ? 0f : 1f;
-        // Kill any existing tween
-        dissolveTween?.Kill();
+        float endDissolveValue = state ? 1f : 0f;
+        if (time <= 0)
+        {
+            mpb.SetFloat("_Amount", endDissolveValue);
+            meshRenderer.SetPropertyBlock(mpb);
+        }
 
+        
         dissolveTween = DOTween.To(
             () => dissolveValue,
-            x => 
-            {
+            x => {
                 dissolveValue = x;
                 mpb.SetFloat("_Amount", dissolveValue);
                 meshRenderer.SetPropertyBlock(mpb);
             },
-            endValue,
+            endDissolveValue,
             time
         );
     }
