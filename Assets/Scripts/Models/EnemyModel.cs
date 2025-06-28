@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyModel : MonoBehaviour
 {
+    public Action onDeathEnd;
+    public Action onHitEnd;
+
     public enum EnemyState
     {
         Idle = 0,
@@ -52,6 +56,7 @@ public class EnemyModel : MonoBehaviour
         if (chaserSystem == null)
         {
             chaserSystem = GetComponent<ChaserSystem>();
+            chaserSystem.OnChaseStateChanged += SetChaseStateAnim;
         }
 
         if (target != null)
@@ -89,6 +94,34 @@ public class EnemyModel : MonoBehaviour
         return enemyState;
     }
     #endregion
+
+    public void SetChaseState(bool isChasing)
+    {
+        if (chaserSystem != null)
+        {
+            if(isChasing)
+            {
+                chaserSystem.StartChasing();
+                SetChaseStateAnim(true);
+            }
+            else
+            {
+                chaserSystem.StopChasing();                
+            }            
+        }
+    }
+
+    private void SetChaseStateAnim(bool isChasing)
+    {
+        if (isChasing)
+        {
+            SetAnimState(EnemyState.Chase);
+        }
+        else
+        {
+            SetAnimState(EnemyState.Idle);
+        }
+    }
 
     public void SetAnimState(EnemyState newState)
     {
@@ -129,17 +162,21 @@ public class EnemyModel : MonoBehaviour
             case EnemyState.Hit:
                 vatAnimator.SetTintColor(isNormalTintColor);
                 SetAnimState(EnemyState.Idle);
+                onHitEnd?.Invoke();
                 break;
             case EnemyState.Dead:
+                onDeathEnd?.Invoke();
                 break;
         }
     }
 
-    private void OnDestroy()
+    public void ReturnToPool()
     {
         if (vatAnimator != null)
         {
             vatAnimator.OnAnimEnd -= OnEndAnimTrigger;
         }
+        chaserSystem.SetTarget(null);
+        chaserSystem.OnChaseStateChanged -= SetChaseStateAnim;
     }
 }

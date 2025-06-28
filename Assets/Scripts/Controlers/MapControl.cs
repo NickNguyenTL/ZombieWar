@@ -7,13 +7,15 @@ public class MapControl : MonoBehaviour
     [SerializeField]
     private ObjectsPooling enemyChaserPool;
     [SerializeField]
+    private LevelModel levelModel; // Reference to the level model, if needed for level-specific data
+    [SerializeField]
     private Transform playerTransform;
     [SerializeField]
     private List<Transform> spawnList;
     [SerializeField]
     private float spawnInterval = 2f; // Time in seconds between spawns
 
-    private List<EnemyModel> enemiesSpawned = new List<EnemyModel>();
+    private List<EnemyControl> enemiesSpawned = new List<EnemyControl>();
     private List<Matrix4x4> enemyMatrices = new List<Matrix4x4>();
 
     // Start is called before the first frame update
@@ -29,7 +31,7 @@ public class MapControl : MonoBehaviour
             Debug.LogError("Enemy pool, player transform or spawn list is not set!");
             return;
         }
-        enemiesSpawned = new List<EnemyModel>();
+        enemiesSpawned = new List<EnemyControl>();
         enemyChaserPool.Init();
     }
 
@@ -38,8 +40,8 @@ public class MapControl : MonoBehaviour
         GameObject enemyObject = enemyChaserPool.GetObject();
         Transform spawnPoint = spawnList[Random.Range(0, spawnList.Count)];
         enemyObject.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
-        EnemyModel newEnemy = enemyObject.GetComponent<EnemyModel>();
-        newEnemy.Init(playerTransform);
+        EnemyControl newEnemy = enemyObject.GetComponent<EnemyControl>();
+        newEnemy.Init(enemyChaserPool, playerTransform);
         enemiesSpawned.Add(newEnemy);
     }
 

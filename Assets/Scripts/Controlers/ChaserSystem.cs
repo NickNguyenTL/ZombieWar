@@ -100,7 +100,7 @@ public class ChaserSystem: MonoBehaviour
         }
     }
 
-    void StartChasing()
+    public void StartChasing()
     {
         if (agent != null)
         {
@@ -109,7 +109,7 @@ public class ChaserSystem: MonoBehaviour
         }
     }
 
-    void StopChasing()
+    public void StopChasing()
     {
         if (agent != null && IsChasing)
         {
@@ -124,13 +124,15 @@ public class ChaserSystem: MonoBehaviour
         if (agent == null)
         {
             Debug.LogError("NavMeshAgent is not initialized!");
+            StopChasing();
             return;
         }
 
         target = newTarget;
         if (target == null)
         {
-            Debug.LogWarning("No target assigned to chase!");
+            OnChaseStateChanged = null;
+            StopChasing();
             return;
         }
     }
