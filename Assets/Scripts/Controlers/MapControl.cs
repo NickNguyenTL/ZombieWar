@@ -5,11 +5,13 @@ using UnityEngine;
 public class MapControl : MonoBehaviour
 {
     [SerializeField]
+    private FXSource vfxSource; // Reference to the VFX source, if needed for visual effects.
+    [SerializeField]
     private ObjectsPooling enemyChaserPool;
     [SerializeField]
     private LevelModel levelModel; // Reference to the level model, if needed for level-specific data
     [SerializeField]
-    private Transform playerTransform;
+    private PlayerControl playerControl;
     [SerializeField]
     private List<Transform> spawnList;
     [SerializeField]
@@ -26,13 +28,24 @@ public class MapControl : MonoBehaviour
 
     private void Init()
     {
-        if (enemyChaserPool == null || playerTransform == null || spawnList.Count == 0)
+        if (vfxSource != null)
+        {
+            vfxSource.Init(10);
+        }
+
+        if (enemyChaserPool == null || playerControl == null || spawnList.Count == 0)
         {
             Debug.LogError("Enemy pool, player transform or spawn list is not set!");
             return;
         }
         enemiesSpawned = new List<EnemyControl>();
         enemyChaserPool.Init();
+
+        // Initialize the spawn timer
+        spawnTimer = levelModel.levelTime;
+
+        playerControl.Init(vfxSource);
+        playerControl.OnPlayerDamageTaken += CheckPlayerHealth;
     }
 
     private void SpawnEnemy()
@@ -41,11 +54,12 @@ public class MapControl : MonoBehaviour
         Transform spawnPoint = spawnList[Random.Range(0, spawnList.Count)];
         enemyObject.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
         EnemyControl newEnemy = enemyObject.GetComponent<EnemyControl>();
-        newEnemy.Init(enemyChaserPool, playerTransform);
+        newEnemy.Init(enemyChaserPool, playerControl.transform);
         enemiesSpawned.Add(newEnemy);
     }
 
     float spawnTimer = 0f;
+    float levelTimer = 0f;
     // Update is called once per frame
     void Update()
     {
@@ -58,5 +72,28 @@ public class MapControl : MonoBehaviour
         {
             spawnTimer -= Time.deltaTime;
         }
+
+        if(levelTimer <= 0)
+        {
+           SetGameResult(true);
+        }
+        else
+        {
+            levelTimer -= Time.deltaTime;
+        }
+    }
+
+    private void CheckPlayerHealth(int playerHealth)
+    {
+        if(playerHealth <= 0)
+        {
+            SetGameResult(false);
+            playerControl.PlayerDeath();
+        }
+    }
+
+    private void SetGameResult(bool result)
+    {
+        
     }
 }

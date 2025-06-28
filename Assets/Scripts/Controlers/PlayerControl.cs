@@ -1,28 +1,56 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public Action<int> OnPlayerDamageTaken;
+
     [SerializeField]
     private LayerMask enemyLayerMask;
     [SerializeField]
     private LayerMask obstacleLayerMask;
 
+    [Header("Player Data")]
+    [SerializeField]
+    private CharacterController playerController; // Character controller for the player character
+    [SerializeField]
+    private Animator playerAnimator; // Animator for the player character
+    [SerializeField]
+    private Collider playerCollider;
+    [SerializeField]
+    private float invisibleTime = 0.5f; // Time in seconds for which the player is invisible after taking damage
+    [SerializeField]
+    private int maxHealth = 5; // Maximum health of the player
+
     [SerializeField]
     private Transform weaponTransform;
+    [SerializeField]
+    private List<WeaponModel> Weapons;
 
     private WeaponModel currentWeapon;
     private float attackCooldown = 0f;
-    public void Init()
+    private int currentHealth;
+    private FXSource fxSource;
+    public void Init(FXSource _fXSource)
     {
-        
+        playerCollider.enabled = true;
+        currentHealth = maxHealth;
+
+        SetWeapon(0); // Set the initial weapon, assuming the first weapon in the list is the default one
+        fxSource = _fXSource;
     }
 
-    public void SetWeapon(WeaponModel weapon)
+    public void SetWeapon(int weaponId)
     {
-        currentWeapon = weapon;
-        attackCooldown = weapon.AttackSpeed;
+        for(int i = 0; i < Weapons.Count; i++)
+        {
+            Weapons[i].gameObject.SetActive(i == weaponId);
+        }
+        currentWeapon = Weapons[weaponId];
+        currentWeapon.Init(); // Initialize the weapon
+        attackCooldown = currentWeapon.AttackSpeed;
     }
 
     public Transform FindClosestEnemy(float maxDistance, float maxAngle)
@@ -56,7 +84,7 @@ public class PlayerControl : MonoBehaviour
         // Implement attack logic here        
         if (enemyControl != null)
         {            
-            enemyControl.GetDamage(currentWeapon.Damage);
+            enemyControl.TakeDamage(currentWeapon.Damage);
         }
         currentWeapon.PlayAttack();
 
@@ -98,6 +126,39 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            EnemyControl enemyControl = other.GetComponent<EnemyControl>();
+            if (enemyControl != null)
+            {
+                TakeDamage(enemyControl.GetEnemyData().curDamage); // Take damage from the enemy
+            }
+        }
+    }
+
+    Coroutine invisibleCoroutine;
+    private void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+       // Handle player taking damage
+        OnPlayerDamageTaken?.Invoke(currentHealth);
+
+        if(invisibleCoroutine != null)
+        {
+           StopCoroutine(invisibleCoroutine);
+        }
+        invisibleCoroutine = StartCoroutine(InvisibleProcess(invisibleTime)); // Start the coroutine to make the player invisible
+    }
+
+    IEnumerator InvisibleProcess(float timer)
+    {
+        playerCollider.enabled = false; // Make the player invisible
+        yield return new WaitForSeconds(timer);
+        playerCollider.enabled = true; // Make the player visible again
+    }
+
     private void Update()
     {
         if (attackCooldown > 0)
@@ -108,10 +169,18 @@ public class PlayerControl : MonoBehaviour
         if (attackCooldown <= 0)
         {
             Transform target = FindClosestEnemy(currentWeapon.Range, 60f);
-
             
             HitScanForward(target);
             attackCooldown = currentWeapon.AttackSpeed; // Reset cooldown
         }
+    }
+
+    public void PlayerDeath()
+    {
+        if (invisibleCoroutine != null)
+        {
+            StopCoroutine(invisibleCoroutine);
+        }
+        playerCollider.enabled = false; // Make the player invisible
     }
 }

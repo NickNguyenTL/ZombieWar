@@ -9,7 +9,7 @@ public class WeaponModel : MonoBehaviour
     [SerializeField]
     private ParticleSystem attackFx;
 
-    public void Init(WeaponData data)
+    public void Init()
     {
         if (attackFx != null)
         {

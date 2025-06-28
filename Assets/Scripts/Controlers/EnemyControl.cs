@@ -24,7 +24,7 @@ public class EnemyControl : MonoBehaviour
         col.enabled = true;
     }
 
-    public void GetDamage(int damage)
+    public void TakeDamage(int damage)
     {
         if (curData != null)
         {
@@ -54,6 +54,11 @@ public class EnemyControl : MonoBehaviour
     {
         col.enabled = true;
         enemyModel.SetChaseState(true);
+    }
+
+    public EnemyGameData GetEnemyData()
+    {
+        return curData;
     }
 
     private void Destroy()

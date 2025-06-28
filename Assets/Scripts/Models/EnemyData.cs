@@ -7,6 +7,7 @@ public class EnemyData : ScriptableObject
 {
     public string enemyName;
     public int health;
+    public int damage;
     public float speed;
     public float exp;
 }
@@ -16,27 +17,18 @@ public class EnemyGameData
     public string enemyName;
     public int baseHealth;
     public int curHealth;
+    public int baseDamage;
+    public int curDamage;
     public float baseSpeed;
     public float curSpeed;
     public float maxExp;
     public float curExp;
 
-    public EnemyGameData(string name, int health, float speed, float exp)
-    {
-        enemyName = name;
-        baseHealth = health;
-        baseSpeed = speed;
-        maxExp = exp;
-
-        curHealth = health;
-        curSpeed = speed;
-        curExp = 0f;
-    }
-
     public EnemyGameData(EnemyGameData data)
     {
         enemyName = data.enemyName;
         baseHealth = data.baseHealth;
+        baseDamage = data.baseDamage;
         baseSpeed = data.baseSpeed;
         maxExp = data.maxExp;
 
@@ -49,6 +41,7 @@ public class EnemyGameData
     {
         enemyName = data.enemyName;
         baseHealth = data.health;
+        baseDamage = data.damage;
         baseSpeed = data.speed;
         maxExp = data.exp;
 
