@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Terresquall;
 using UnityEngine;
 
 public class MapControl : MonoBehaviour
@@ -13,10 +14,13 @@ public class MapControl : MonoBehaviour
     [SerializeField]
     private PlayerControl playerControl;
     [SerializeField]
-    private List<Transform> spawnList;
+    private List<Transform> spawnList;    
+
+    [Header("Other Controler")]
+    [SerializeField]
+    private Map01_View mapView;
 
     private List<EnemyControl> enemiesSpawned = new List<EnemyControl>();
-    private List<Matrix4x4> enemyMatrices = new List<Matrix4x4>();
 
     int curPhaseId;
     bool endGame;
@@ -33,6 +37,10 @@ public class MapControl : MonoBehaviour
             vfxSource.Init(3);
         }
 
+        mapView.Init();
+        mapView.OnChangeWeapon = ChangePlayerWeapon;
+        mapView.OnReturnToMenu = LoadMainMenuScene;
+
         if (enemyChaserPool == null || playerControl == null || spawnList.Count == 0)
         {
             Debug.LogError("Enemy pool, player transform or spawn list is not set!");
@@ -44,9 +52,11 @@ public class MapControl : MonoBehaviour
         playerControl.Init(vfxSource);
         playerControl.OnPlayerDamageTaken += CheckPlayerHealth;
 
+        ChangePlayerWeapon();
+
         curPhaseId = 0;
         levelTimer = levelModel.levelPhases[curPhaseId].phaseTime;
-        endGame = false;
+        endGame = false;        
     }
 
     private void SpawnEnemy(EnemyData enemyData, int spawnPosId)
@@ -66,6 +76,8 @@ public class MapControl : MonoBehaviour
     {
         if(!endGame)
         {
+            playerControl.PlayerMove(mapView.GetJoystickInput());
+
             if (spawnTimer <= 0)
             {
                 var curPhase = levelModel.levelPhases[curPhaseId];
@@ -106,6 +118,7 @@ public class MapControl : MonoBehaviour
         if(!endGame)
         {
             Debug.Log("Cur Player Health " + playerHealth);
+            mapView.SetPlayerHealth(playerHealth);
             if (playerHealth <= 0)
             {
                 SetGameResult(false);
@@ -117,6 +130,19 @@ public class MapControl : MonoBehaviour
     private void SetGameResult(bool result)
     {
         endGame = true;
+        mapView.ShowGameOver(result);
         Debug.Log("Game Over! " + result);
+    }
+
+    private void LoadMainMenuScene()
+    {
+        // Load the main menu scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+
+    private void ChangePlayerWeapon()
+    {
+        string weaponName = playerControl.NextWeapon();
+        mapView.SetChangeWeaponText(weaponName);
     }
 }

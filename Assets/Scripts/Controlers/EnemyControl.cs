@@ -45,9 +45,11 @@ public class EnemyControl : MonoBehaviour
 
     private IEnumerator SetDeath()
     {
-        enemyModel.SetAnimState(EnemyState.Dead);
-        col.enabled = false;
         enemyModel.SetChaseState(false);
+
+        yield return null; // Small delay before death animation
+        enemyModel.SetAnimState(EnemyState.Dead);
+        col.enabled = false;        
 
         float deathTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Dead);
         yield return new WaitForSeconds(deathTime);
@@ -57,8 +59,10 @@ public class EnemyControl : MonoBehaviour
 
     private IEnumerator SetHitState()
     {
-        enemyModel.SetAnimState(EnemyState.Hit);
         enemyModel.SetChaseState(false);
+        yield return null;
+
+        enemyModel.SetAnimState(EnemyState.Hit);        
         float hitTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Hit);
 
         yield return new WaitForSeconds(hitTime);

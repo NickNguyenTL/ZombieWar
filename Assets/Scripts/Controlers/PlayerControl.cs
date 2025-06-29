@@ -12,6 +12,8 @@ public class PlayerControl : MonoBehaviour
     private LayerMask enemyLayerMask;
     [SerializeField]
     private LayerMask obstacleLayerMask;
+    [SerializeField]
+    private Transform isHitTransform;
 
     [Header("Player Data")]
     [SerializeField]
@@ -24,7 +26,10 @@ public class PlayerControl : MonoBehaviour
     private float invisibleTime = 0.5f; // Time in seconds for which the player is invisible after taking damage
     [SerializeField]
     private int maxHealth = 5; // Maximum health of the player
+    [SerializeField]
+    private float moveSpeed = 2f;
 
+    [Header ("Weapons")]
     [SerializeField]
     private Transform weaponTransform;
     [SerializeField]
@@ -40,14 +45,16 @@ public class PlayerControl : MonoBehaviour
         playerCollider.enabled = true;
         currentHealth = maxHealth;
 
-        SetWeapon(0); // Set the initial weapon, assuming the first weapon in the list is the default one
+        currentWeaponId = 0; // Current weapon index
+        SetWeapon(currentWeaponId); // Set the initial weapon, assuming the first weapon in the list is the default one
         fxSource = _fXSource;
 
         attackCooldown = 0f;
         isDeath = false;
     }
 
-    public void SetWeapon(int weaponId)
+    int currentWeaponId = 0; // Current weapon index
+    private void SetWeapon(int weaponId)
     {
         for(int i = 0; i < Weapons.Count; i++)
         {
@@ -56,6 +63,13 @@ public class PlayerControl : MonoBehaviour
         currentWeapon = Weapons[weaponId];
         currentWeapon.Init(); // Initialize the weapon
         attackCooldown = currentWeapon.AttackSpeed;
+    }
+
+    public string NextWeapon()
+    {
+        currentWeaponId = (currentWeaponId + 1) % Weapons.Count;
+        SetWeapon(currentWeaponId);
+        return Weapons[currentWeaponId].WeaponName; // Return the name of the new weapon
     }
 
     public Transform FindClosestEnemy(float maxDistance, float maxAngle)
@@ -150,7 +164,8 @@ public class PlayerControl : MonoBehaviour
     private void TakeDamage(int damage)
     {
         currentHealth -= damage;
-       // Handle player taking damage
+        fxSource.PlayFX(COMBAT_FX.ZOMBIE_HIT_BULLET, isHitTransform.position, isHitTransform.forward, 0.5f); // Play hit VFX
+        // Handle player taking damage
         OnPlayerDamageTaken?.Invoke(currentHealth);
 
         if(invisibleCoroutine != null)
@@ -194,6 +209,20 @@ public class PlayerControl : MonoBehaviour
         }
         playerCollider.enabled = false; // Make the player invisible
         isDeath = true;
+    }
+
+    public void PlayerMove(Vector2 input)
+    {
+        if (isDeath)
+            return;
+
+        Vector3 moveDirection = new Vector3(input.x, 0, input.y).normalized; // Get the movement direction from input
+        playerAnimator.SetFloat("Speed", moveDirection.magnitude);
+        if (moveDirection.magnitude >= 0.1f)
+        {
+            playerController.Move(moveDirection * moveSpeed * Time.deltaTime); // Move the player character
+            //RotateToward(moveDirection); // Rotate the player towards the movement direction
+        }
     }
 
     private void OnDrawGizmosSelected()

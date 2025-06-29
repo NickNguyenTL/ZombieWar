@@ -46,7 +46,7 @@ MonoBehaviour:
     - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
       spawnPosID: 4
   - phaseTime: 60
-    spawnInterval: 2
+    spawnInterval: 0.5
     levelEnemyData:
     - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
       spawnPosID: 0

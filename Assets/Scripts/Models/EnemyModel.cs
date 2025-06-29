@@ -139,11 +139,11 @@ public class EnemyModel : MonoBehaviour
                 vatAnimator.SetTintColor(isNormalTintColor);
                 break;
             case EnemyState.Hit:
-                vatAnimator.Play((int)EnemyState.Hit, false);
+                vatAnimator.Play((int)EnemyState.Hit, false, true);
                 vatAnimator.SetTintColor(isHitTintColor);
                 break;
             case EnemyState.Dead:
-                vatAnimator.Play((int)EnemyState.Dead, false, false);
+                vatAnimator.Play((int)EnemyState.Dead, false, true);
                 vatAnimator.SetDisolve(true, 1.5f);
                 break;
         }

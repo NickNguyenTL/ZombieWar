@@ -96,6 +96,11 @@ public class FXSource : MonoBehaviour
     /// </param>
     public void PlayFX(COMBAT_FX fx, RaycastHit hit, float delay = 0.5f)
     {
+        PlayFX(fx, hit.point, hit.normal, delay);
+    }
+
+    public void PlayFX(COMBAT_FX fx, Vector3 position, Vector3 normal, float delay = 0.5f)
+    {
         if (sfxPools.ContainsKey(fx))
         {
             AudioClip selectedSFX = sfxPools[fx];
@@ -108,8 +113,8 @@ public class FXSource : MonoBehaviour
         ParticleSystem selectedVFX = GetVFXFromPool(fx);
         if (selectedVFX != null)
         {
-            selectedVFX.transform.position = hit.point;
-            selectedVFX.transform.rotation = Quaternion.LookRotation(hit.normal);
+            selectedVFX.transform.position = position;
+            selectedVFX.transform.rotation = Quaternion.LookRotation(normal);
 
             selectedVFX.Play();
             StartCoroutine(ReturnToPoolAfterDelay(selectedVFX, fx, delay));
