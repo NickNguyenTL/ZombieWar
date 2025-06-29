@@ -30,7 +30,7 @@ public class MapControl : MonoBehaviour
     {
         if (vfxSource != null)
         {
-            vfxSource.Init(10);
+            vfxSource.Init(3);
         }
 
         if (enemyChaserPool == null || playerControl == null || spawnList.Count == 0)
@@ -42,7 +42,7 @@ public class MapControl : MonoBehaviour
         enemyChaserPool.Init();
 
         // Initialize the spawn timer
-        spawnTimer = levelModel.levelTime;
+        levelTimer = levelModel.levelTime;
 
         playerControl.Init(vfxSource);
         playerControl.OnPlayerDamageTaken += CheckPlayerHealth;
@@ -53,7 +53,7 @@ public class MapControl : MonoBehaviour
         GameObject enemyObject = enemyChaserPool.GetObject();
         Transform spawnPoint = spawnList[Random.Range(0, spawnList.Count)];
         enemyObject.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
-        EnemyControl newEnemy = enemyObject.GetComponent<EnemyControl>();
+        EnemyControl newEnemy = enemyObject.GetComponentInChildren<EnemyControl>();
         newEnemy.Init(enemyChaserPool, playerControl.transform);
         enemiesSpawned.Add(newEnemy);
     }

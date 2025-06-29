@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class EnemyModel : MonoBehaviour
 {
-    public Action onDeathEnd;
-    public Action onHitEnd;
-
     public enum EnemyState
     {
         Idle = 0,
@@ -26,12 +23,6 @@ public class EnemyModel : MonoBehaviour
     private Color32 isHitTintColor;
     [SerializeField]
     private Color32 isNormalTintColor;
-
-    [Header("VFX Transform")]
-    [SerializeField]
-    private Transform isHitVFXTransform;
-    [SerializeField] 
-    private Transform deathVFXTransform;
 
     [Header("Animator")]
     [SerializeField]
@@ -56,13 +47,14 @@ public class EnemyModel : MonoBehaviour
         if (chaserSystem == null)
         {
             chaserSystem = GetComponent<ChaserSystem>();
-            chaserSystem.OnChaseStateChanged += SetChaseStateAnim;
         }
 
         if (target != null)
         {
             chaserSystem.Init();
             chaserSystem.SetTarget(target);
+            chaserSystem.OnChaseStateChanged += SetChaseStateAnim;
+            chaserSystem.SetSpeed(enemyData.speed);
         }
 
         if (vatAnimator != null)
@@ -92,6 +84,11 @@ public class EnemyModel : MonoBehaviour
     public EnemyState GetAnimState()
     {
         return enemyState;
+    }
+
+    public VAT_Animator GetVATAnimator()
+    {
+        return vatAnimator;
     }
     #endregion
 
@@ -148,7 +145,7 @@ public class EnemyModel : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Set Anim State: " + newState.ToString());
+        Debug.Log(gameObject.name + " set Anim State: " + newState.ToString());
     }
 
     private void OnEndAnimTrigger(int animId)
@@ -160,12 +157,8 @@ public class EnemyModel : MonoBehaviour
             case EnemyState.Chase:
                 break;
             case EnemyState.Hit:
-                vatAnimator.SetTintColor(isNormalTintColor);
-                SetAnimState(EnemyState.Idle);
-                onHitEnd?.Invoke();
                 break;
             case EnemyState.Dead:
-                onDeathEnd?.Invoke();
                 break;
         }
     }

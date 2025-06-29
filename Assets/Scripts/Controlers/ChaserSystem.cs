@@ -76,6 +76,11 @@ public class ChaserSystem: MonoBehaviour
         }
     }
 
+    public void SetSpeed(float newSpeed)
+    {
+        agent.speed = newSpeed;
+    }
+
     void UpdateChase()
     {
         if (target == null) return;

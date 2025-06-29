@@ -84,6 +84,7 @@ public class VAT_Animator : MonoBehaviour
             {
                 animTime = animLength; // Stop at the end
                 OnAnimEnd?.Invoke(currentAnim);
+                return;
             }
         }
 
@@ -117,7 +118,6 @@ public class VAT_Animator : MonoBehaviour
         {
             if(currentAnim != Id || forceRepeat)
             {
-                OnAnimEnd?.Invoke(currentAnim);
                 currentAnim = Id;
                 animTime = 0f;
             }
@@ -168,6 +168,11 @@ public class VAT_Animator : MonoBehaviour
             endDissolveValue,
             time
         );
+    }
+
+    public float GetAnimationTime(int id)
+    {
+        return animList[id].frameCount / (float)animList[id].sampleRate;
     }
     #endregion
 }

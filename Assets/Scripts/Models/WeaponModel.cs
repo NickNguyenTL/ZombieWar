@@ -8,6 +8,8 @@ public class WeaponModel : MonoBehaviour
     private WeaponData weaponData;
     [SerializeField]
     private ParticleSystem attackFx;
+    [SerializeField]
+    private WFX_LightFlicker wFX_LightFlicker;
 
     public void Init()
     {
@@ -43,6 +45,7 @@ public class WeaponModel : MonoBehaviour
        if (attackFx != null)
         {
             attackFx.Play();
+            wFX_LightFlicker.StartFlicker();
         }
     }
 }

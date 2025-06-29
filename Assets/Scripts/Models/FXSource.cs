@@ -20,8 +20,6 @@ public class FXSource : MonoBehaviour
 
     [Header ("SFX")]
     [SerializeField]
-    private AudioClip bg_SFX;
-    [SerializeField]
     private AudioClip bulletHit_Env_SFX;
     [SerializeField]
     private AudioClip bulletHit_Zombie_SFX;
@@ -29,8 +27,6 @@ public class FXSource : MonoBehaviour
     private AudioClip bomb_Explosion_SFX;
     [SerializeField]
     private AudioSource fxAudioSource;
-    [SerializeField]
-    private AudioSource bgAudioSource;
 
     private Dictionary<COMBAT_FX, Queue<ParticleSystem>> vfxPools;
     private Dictionary<COMBAT_FX, AudioClip> sfxPools;
@@ -52,15 +48,15 @@ public class FXSource : MonoBehaviour
         for (int i = 0; i < vfxPreset; i++)
         {
             ParticleSystem envHitBullet = Instantiate(bulletHit_Env, transform);
-            envHitBullet.gameObject.SetActive(false);
+            envHitBullet.Stop();
             vfxPools[COMBAT_FX.ENV_HIT_BULLET].Enqueue(envHitBullet);
 
             ParticleSystem playerHitHead = Instantiate(bulletHit_Zombie, transform);
-            bulletHit_Zombie.gameObject.SetActive(false);
+            bulletHit_Zombie.Stop();
             vfxPools[COMBAT_FX.ZOMBIE_HIT_BULLET].Enqueue(playerHitHead);
 
             ParticleSystem playerHitBody = Instantiate(bomb_Explosion, transform);
-            playerHitBody.gameObject.SetActive(false);
+            playerHitBody.Stop();
             vfxPools[COMBAT_FX.BOMB_EXPLOSION].Enqueue(playerHitBody);
         }
 
@@ -89,7 +85,7 @@ public class FXSource : MonoBehaviour
     /// <summary>
     /// Play the FX at the hit point.
     /// </summary>
-    /// <param name="vfx">
+    /// <param name="fx">
     /// Type of VFX to play.
     /// </param>
     /// <param name="hit">
@@ -98,25 +94,25 @@ public class FXSource : MonoBehaviour
     /// <param name="delay">
     /// Delay before returning the VFX to the pool, aka the duration of the VFX.
     /// </param>
-    public void PlayFX(COMBAT_FX vfx, RaycastHit hit, float delay = 0.5f)
+    public void PlayFX(COMBAT_FX fx, RaycastHit hit, float delay = 0.5f)
     {
-        if (sfxPools.ContainsKey(vfx))
+        if (sfxPools.ContainsKey(fx))
         {
-            AudioClip selectedSFX = sfxPools[vfx];
+            AudioClip selectedSFX = sfxPools[fx];
             if (selectedSFX != null && fxAudioSource != null)
             {
                 fxAudioSource.PlayOneShot(selectedSFX);
             }
         }
 
-        ParticleSystem selectedVFX = GetVFXFromPool(vfx);
+        ParticleSystem selectedVFX = GetVFXFromPool(fx);
         if (selectedVFX != null)
         {
             selectedVFX.transform.position = hit.point;
             selectedVFX.transform.rotation = Quaternion.LookRotation(hit.normal);
 
             selectedVFX.Play();
-            StartCoroutine(ReturnToPoolAfterDelay(selectedVFX, vfx, delay));
+            StartCoroutine(ReturnToPoolAfterDelay(selectedVFX, fx, delay));
         }
     }
 
@@ -125,7 +121,7 @@ public class FXSource : MonoBehaviour
         if (vfxPools[vfx].Count > 0)
         {
             ParticleSystem vfxInstance = vfxPools[vfx].Dequeue();
-            vfxInstance.gameObject.SetActive(true);
+            vfxInstance.Stop();
             return vfxInstance;
         }
         else
@@ -142,7 +138,7 @@ public class FXSource : MonoBehaviour
     private IEnumerator ReturnToPoolAfterDelay(ParticleSystem particleSystem, COMBAT_FX vfx, float delay)
     {
         yield return new WaitForSeconds(delay);
-        particleSystem.gameObject.SetActive(false);
+        particleSystem.Stop();
         vfxPools[vfx].Enqueue(particleSystem);
     }
        

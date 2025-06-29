@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -40,6 +41,8 @@ public class PlayerControl : MonoBehaviour
 
         SetWeapon(0); // Set the initial weapon, assuming the first weapon in the list is the default one
         fxSource = _fXSource;
+
+        attackCooldown = 0f;
     }
 
     public void SetWeapon(int weaponId)
@@ -57,18 +60,16 @@ public class PlayerControl : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, maxDistance, enemyLayerMask);
         Transform closest = null;
-        float minAngle = maxAngle;
         float minDist = maxDistance;
 
         foreach (var hit in hits)
         {
             Vector3 dirToEnemy = (hit.transform.position - transform.position).normalized;
-            float angle = Vector3.Angle(transform.forward, dirToEnemy);
+            //float angle = Vector3.Angle(transform.forward, dirToEnemy);
             float dist = Vector3.Distance(transform.position, hit.transform.position);
 
-            if (angle < minAngle && dist < minDist)
+            if (dist < minDist)
             {
-                minAngle = angle;
                 minDist = dist;
                 closest = hit.transform;
             }
@@ -76,54 +77,59 @@ public class PlayerControl : MonoBehaviour
         return closest;
     }
 
-    public void Attack(EnemyControl enemyControl)
+    public void Attack(RaycastHit hit)
     {
-        if (currentWeapon == null || enemyControl == null)
+        if (currentWeapon == null)
             return;
 
-        // Implement attack logic here        
-        if (enemyControl != null)
-        {            
-            enemyControl.TakeDamage(currentWeapon.Damage);
-        }
-        currentWeapon.PlayAttack();
-
-        Debug.Log($"Attacking {enemyControl.name} with {currentWeapon.WeaponName}");
-    }
-
-    private void RotateToward(Vector3 dir)
-    {
-        Quaternion weaponLookRotation = Quaternion.LookRotation(dir);
-        weaponTransform.rotation = weaponLookRotation;
-
-        Quaternion playerLookRotation = Quaternion.LookRotation(dir, Vector3.up);
-        transform.rotation = playerLookRotation;
-    }
-
-    /// <summary>
-    /// Raycast forward from the player to detect enemies within range and angle.
-    /// </summary>
-    private void HitScanForward(Transform target)
-    {
-        Vector3 raycastDir = (target != null) ? (target.position - transform.position).normalized : transform.forward;
-        RaycastHit hit;
-        LayerMask layerMask = enemyLayerMask | obstacleLayerMask;
-
-        if (target != null)
-        {
-            //Rotate towards the target
-            RotateToward(raycastDir);
-        }
-
-        // Perform a raycast to check for the first enemy in the direction of the raycast
-        if (Physics.Raycast(transform.position, raycastDir, out hit, currentWeapon.Range, layerMask))
+        if (hit.collider != null)
         {
             EnemyControl enemyControl = hit.collider.GetComponent<EnemyControl>();
             if (enemyControl != null)
             {
-                Attack(enemyControl);
+                enemyControl.TakeDamage(currentWeapon.Damage);
+                Debug.Log($"Attacking {enemyControl.name} with {currentWeapon.WeaponName}");
+                fxSource.PlayFX(COMBAT_FX.ZOMBIE_HIT_BULLET, hit, 0.5f); // Play attack VFX
             }
+            else
+            {
+                fxSource.PlayFX(COMBAT_FX.ENV_HIT_BULLET, hit, 0.5f); // Play attack VFX
+            }
+        }            
+
+        currentWeapon.PlayAttack();
+        playerAnimator.SetTrigger("Shoot");
+    }
+
+    private void RotateToward(Vector3 dir)
+    {
+        //Quaternion weaponLookRotation = Quaternion.LookRotation(dir);
+        //weaponTransform.rotation = weaponLookRotation;
+        Quaternion playerLookRotation = Quaternion.LookRotation(dir, Vector3.up);
+        transform.rotation = playerLookRotation;
+    }
+
+    RaycastHit hit;
+    /// <summary>
+    /// Raycast forward from the player to detect enemies within range and angle.
+    /// </summary>
+    private RaycastHit HitScanForward(Transform target)
+    {
+        Vector3 raycastDir = (target != null) ? (target.position - transform.position).normalized : transform.forward;
+        LayerMask layerMask = enemyLayerMask | obstacleLayerMask;
+
+        // Perform a raycast to check for the first enemy in the direction of the raycast
+        if (Physics.Raycast(transform.position, raycastDir, out hit, currentWeapon.Range, layerMask))
+        {
+            if (target != null)
+            {
+                //Rotate towards the target
+                RotateToward(raycastDir);
+            }
+            return hit;
         }
+
+        return new RaycastHit(); // Return an empty hit if no enemy is found
     }
 
     private void OnTriggerEnter(Collider other)
@@ -161,17 +167,17 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        if (attackCooldown > 0)
-        {
-            attackCooldown -= Time.deltaTime;
-        }
-
         if (attackCooldown <= 0)
         {
-            Transform target = FindClosestEnemy(currentWeapon.Range, 60f);
+            Transform target = FindClosestEnemy(currentWeapon.Range, 100f);
             
-            HitScanForward(target);
+            var hit = HitScanForward(target);            
+            Attack(hit);
             attackCooldown = currentWeapon.AttackSpeed; // Reset cooldown
+        }
+        else
+        {
+            attackCooldown -= Time.deltaTime;
         }
     }
 
@@ -182,5 +188,26 @@ public class PlayerControl : MonoBehaviour
             StopCoroutine(invisibleCoroutine);
         }
         playerCollider.enabled = false; // Make the player invisible
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw a sphere to visualize the attack range
+        // Draw a ray in the direction of the attack
+        if (currentWeapon != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, currentWeapon.Range);
+            Vector3 raycastDir = transform.forward * currentWeapon.Range;
+            Gizmos.DrawRay(transform.position, raycastDir);
+        }
+
+        if(hit.collider != null)
+        {             
+            // Draw a line to the hit point
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position, hit.point);
+            Gizmos.DrawSphere(hit.point, 0.1f); // Draw a small sphere at the hit point
+        }
     }
 }

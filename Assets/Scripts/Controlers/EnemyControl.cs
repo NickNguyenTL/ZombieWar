@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static EnemyModel;
 
 public class EnemyControl : MonoBehaviour
 {
@@ -14,9 +15,7 @@ public class EnemyControl : MonoBehaviour
 
     public void Init(ObjectsPooling objectsPooling, Transform target = null)
     {
-        enemyModel.Init();
-        enemyModel.onHitEnd += SetHitState;
-        enemyModel.onDeathEnd += Destroy;
+        enemyModel.Init(target);
 
         curData = new EnemyGameData(enemyModel.GetEnemyData());
         enemyChaserPool = objectsPooling;
@@ -31,27 +30,40 @@ public class EnemyControl : MonoBehaviour
             if (curData.curHealth > 0)
             {
                 curData.curHealth -= damage;
-                enemyModel.SetAnimState(EnemyModel.EnemyState.Hit);
                 col.enabled = false;
-                enemyModel.SetChaseState(false);
-
                 if (curData.curHealth <= 0)
                 {
-                    SetDeath();
+                    StartCoroutine(SetDeath());
+                }
+                else
+                {
+                    StartCoroutine(SetHitState());
                 }
             }
         }
     }
 
-    private void SetDeath()
+    private IEnumerator SetDeath()
     {
-        enemyModel.SetAnimState(EnemyModel.EnemyState.Dead);
+        enemyModel.SetAnimState(EnemyState.Dead);
         col.enabled = false;
         enemyModel.SetChaseState(false);
+
+        float deathTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Dead);
+        yield return new WaitForSeconds(deathTime);
+
+        Destroy();
     }
 
-    private void SetHitState()
+    private IEnumerator SetHitState()
     {
+        enemyModel.SetAnimState(EnemyState.Hit);
+        enemyModel.SetChaseState(false);
+        float hitTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Hit);
+
+        yield return new WaitForSeconds(hitTime);
+
+        enemyModel.SetAnimState(EnemyState.Idle);
         col.enabled = true;
         enemyModel.SetChaseState(true);
     }

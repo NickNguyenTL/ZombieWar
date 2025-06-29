@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Weapon_01
   m_EditorClassIdentifier: 
   weaponName: Sniper
-  damage: 2
+  damage: 1
   attackSpeed: 1
   range: 10
