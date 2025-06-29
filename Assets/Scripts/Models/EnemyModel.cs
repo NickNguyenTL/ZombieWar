@@ -42,8 +42,11 @@ public class EnemyModel : MonoBehaviour
         }
     }
 
-    public void Init(Transform target = null)
+    public void Init(Transform target = null, EnemyData newData = null)
     {
+        enemyData = newData != null ? newData : enemyData;
+        transform.localScale = Vector3.one * enemyData.size;
+
         if (chaserSystem == null)
         {
             chaserSystem = GetComponent<ChaserSystem>();

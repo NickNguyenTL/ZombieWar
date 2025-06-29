@@ -14,12 +14,12 @@ public class MapControl : MonoBehaviour
     private PlayerControl playerControl;
     [SerializeField]
     private List<Transform> spawnList;
-    [SerializeField]
-    private float spawnInterval = 2f; // Time in seconds between spawns
 
     private List<EnemyControl> enemiesSpawned = new List<EnemyControl>();
     private List<Matrix4x4> enemyMatrices = new List<Matrix4x4>();
 
+    int curPhaseId;
+    bool endGame;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,20 +41,21 @@ public class MapControl : MonoBehaviour
         enemiesSpawned = new List<EnemyControl>();
         enemyChaserPool.Init();
 
-        // Initialize the spawn timer
-        levelTimer = levelModel.levelTime;
-
         playerControl.Init(vfxSource);
         playerControl.OnPlayerDamageTaken += CheckPlayerHealth;
+
+        curPhaseId = 0;
+        levelTimer = levelModel.levelPhases[curPhaseId].phaseTime;
+        endGame = false;
     }
 
-    private void SpawnEnemy()
+    private void SpawnEnemy(EnemyData enemyData, int spawnPosId)
     {
         GameObject enemyObject = enemyChaserPool.GetObject();
-        Transform spawnPoint = spawnList[Random.Range(0, spawnList.Count)];
+        Transform spawnPoint = spawnList[spawnPosId % (spawnList.Count)];
         enemyObject.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
         EnemyControl newEnemy = enemyObject.GetComponentInChildren<EnemyControl>();
-        newEnemy.Init(enemyChaserPool, playerControl.transform);
+        newEnemy.Init(enemyChaserPool, enemyData, playerControl.transform);
         enemiesSpawned.Add(newEnemy);
     }
 
@@ -63,37 +64,59 @@ public class MapControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (spawnTimer <= 0)
+        if(!endGame)
         {
-            SpawnEnemy();
-            spawnTimer = spawnInterval;
-        }
-        else
-        {
-            spawnTimer -= Time.deltaTime;
-        }
+            if (spawnTimer <= 0)
+            {
+                var curPhase = levelModel.levelPhases[curPhaseId];
+                for (int i = 0; i < curPhase.levelEnemyData.Count; i++)
+                {
+                    SpawnEnemy(curPhase.levelEnemyData[i].enemyData, curPhase.levelEnemyData[i].spawnPosID);
+                }
 
-        if(levelTimer <= 0)
-        {
-           SetGameResult(true);
-        }
-        else
-        {
-            levelTimer -= Time.deltaTime;
-        }
+                spawnTimer = curPhase.spawnInterval;
+            }
+            else
+            {
+                spawnTimer -= Time.deltaTime;
+            }
+
+            if (curPhaseId >= levelModel.levelPhases.Count)
+            {
+                SetGameResult(true);
+            }
+            else
+            {
+                if (levelTimer > 0)
+                {
+                    levelTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    curPhaseId++;
+                    Debug.Log("New phase: " + curPhaseId);
+                    levelTimer = levelModel.levelPhases[curPhaseId].phaseTime;
+                }
+            }
+        }        
     }
 
     private void CheckPlayerHealth(int playerHealth)
     {
-        if(playerHealth <= 0)
+        if(!endGame)
         {
-            SetGameResult(false);
-            playerControl.PlayerDeath();
-        }
+            Debug.Log("Cur Player Health " + playerHealth);
+            if (playerHealth <= 0)
+            {
+                SetGameResult(false);
+                playerControl.PlayerDeath();
+            }
+        }        
     }
 
     private void SetGameResult(bool result)
     {
-        
+        endGame = true;
+        Debug.Log("Game Over! " + result);
     }
 }

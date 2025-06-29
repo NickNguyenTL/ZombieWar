@@ -13,9 +13,9 @@ public class EnemyControl : MonoBehaviour
     private ObjectsPooling enemyChaserPool;
     private EnemyGameData curData;
 
-    public void Init(ObjectsPooling objectsPooling, Transform target = null)
+    public void Init(ObjectsPooling objectsPooling, EnemyData newData, Transform target = null)
     {
-        enemyModel.Init(target);
+        enemyModel.Init(target, newData);
 
         curData = new EnemyGameData(enemyModel.GetEnemyData());
         enemyChaserPool = objectsPooling;

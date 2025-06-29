@@ -13,4 +13,50 @@ MonoBehaviour:
   m_Name: Map_01_Data
   m_EditorClassIdentifier: 
   mapName: Map 01
-  levelTime: 180
+  levelPhases:
+  - phaseTime: 20
+    spawnInterval: 5
+    levelEnemyData:
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 0
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 1
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 2
+  - phaseTime: 40
+    spawnInterval: 4
+    levelEnemyData:
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 0
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 1
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 2
+  - phaseTime: 60
+    spawnInterval: 3
+    levelEnemyData:
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 0
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 1
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 2
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 3
+    - enemyData: {fileID: 11400000, guid: 007b4292f39e005409976b12bbb014f0, type: 2}
+      spawnPosID: 4
+  - phaseTime: 60
+    spawnInterval: 2
+    levelEnemyData:
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 0
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 1
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 2
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 3
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 4
+    - enemyData: {fileID: 11400000, guid: 2ad1b876aef89a040a03df06afaaccf1, type: 2}
+      spawnPosID: 5

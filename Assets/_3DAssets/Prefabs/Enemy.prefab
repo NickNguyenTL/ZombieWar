@@ -95,8 +95,6 @@ MonoBehaviour:
   isNormalTintColor:
     serializedVersion: 2
     rgba: 4294967295
-  isHitVFXTransform: {fileID: 0}
-  deathVFXTransform: {fileID: 0}
   vatAnimator: {fileID: 4813827694556001469}
   InitOnStart: 0
   InitState: 0
@@ -128,7 +126,7 @@ GameObject:
   - component: {fileID: 5344025084279353052}
   m_Layer: 16
   m_Name: Root
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

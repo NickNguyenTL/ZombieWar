@@ -121,15 +121,15 @@ public class FXSource : MonoBehaviour
         if (vfxPools[vfx].Count > 0)
         {
             ParticleSystem vfxInstance = vfxPools[vfx].Dequeue();
-            vfxInstance.Stop();
+            //vfxInstance.Stop();
             return vfxInstance;
         }
         else
         {
-            ParticleSystem prefab = GetPrefabForVFX(vfx);
-            if (prefab != null)
+            ParticleSystem orgPrefab = GetPrefabForVFX(vfx);
+            if (orgPrefab != null)
             {
-                return Instantiate(prefab, transform);
+                return Instantiate(orgPrefab, transform);
             }
         }
         return null;

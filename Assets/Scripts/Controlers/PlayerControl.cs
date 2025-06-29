@@ -34,6 +34,7 @@ public class PlayerControl : MonoBehaviour
     private float attackCooldown = 0f;
     private int currentHealth;
     private FXSource fxSource;
+    private bool isDeath = false;
     public void Init(FXSource _fXSource)
     {
         playerCollider.enabled = true;
@@ -43,6 +44,7 @@ public class PlayerControl : MonoBehaviour
         fxSource = _fXSource;
 
         attackCooldown = 0f;
+        isDeath = false;
     }
 
     public void SetWeapon(int weaponId)
@@ -132,7 +134,7 @@ public class PlayerControl : MonoBehaviour
         return new RaycastHit(); // Return an empty hit if no enemy is found
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
@@ -167,18 +169,21 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        if (attackCooldown <= 0)
+        if(!isDeath)
         {
-            Transform target = FindClosestEnemy(currentWeapon.Range, 100f);
-            
-            var hit = HitScanForward(target);            
-            Attack(hit);
-            attackCooldown = currentWeapon.AttackSpeed; // Reset cooldown
-        }
-        else
-        {
-            attackCooldown -= Time.deltaTime;
-        }
+            if (attackCooldown <= 0)
+            {
+                Transform target = FindClosestEnemy(currentWeapon.Range, 100f);
+
+                var hit = HitScanForward(target);
+                Attack(hit);
+                attackCooldown = currentWeapon.AttackSpeed; // Reset cooldown
+            }
+            else
+            {
+                attackCooldown -= Time.deltaTime;
+            }
+        }        
     }
 
     public void PlayerDeath()
@@ -188,6 +193,7 @@ public class PlayerControl : MonoBehaviour
             StopCoroutine(invisibleCoroutine);
         }
         playerCollider.enabled = false; // Make the player invisible
+        isDeath = true;
     }
 
     private void OnDrawGizmosSelected()

@@ -10,6 +10,8 @@ public class EnemyData : ScriptableObject
     public int damage;
     public float speed;
     public float exp;
+
+    public float size;
 }
 
 public class EnemyGameData
@@ -34,6 +36,7 @@ public class EnemyGameData
 
         curHealth = this.baseHealth;
         curSpeed = this.baseSpeed;
+        curDamage = this.baseDamage;
         curExp = 0f;
     }
 
@@ -47,6 +50,7 @@ public class EnemyGameData
 
         curHealth = this.baseHealth;
         curSpeed = this.baseSpeed;
+        curDamage = this.baseDamage;
         curExp = 0f;
     }
 }
