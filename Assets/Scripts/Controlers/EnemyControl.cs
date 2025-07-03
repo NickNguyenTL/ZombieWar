@@ -9,9 +9,19 @@ public class EnemyControl : MonoBehaviour
     private EnemyModel enemyModel;
     [SerializeField]
     private Collider col;
+    [SerializeField]
+    private bool InitOnStart;
 
     private ObjectsPooling enemyChaserPool;
     private EnemyGameData curData;
+
+    private void Start()
+    {
+        if (InitOnStart)
+        {
+            Init(null, null, null);
+        }
+    }
 
     public void Init(ObjectsPooling objectsPooling, EnemyData newData, Transform target = null)
     {
@@ -45,12 +55,8 @@ public class EnemyControl : MonoBehaviour
 
     private IEnumerator SetDeath()
     {
-        enemyModel.SetChaseState(false);
-
-        yield return null; // Small delay before death animation
-        enemyModel.SetAnimState(EnemyState.Dead);
-        col.enabled = false;        
-
+        enemyModel.SetChaseState(false, EnemyState.Dead);
+        col.enabled = false;
         float deathTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Dead);
         yield return new WaitForSeconds(deathTime);
 
@@ -59,17 +65,13 @@ public class EnemyControl : MonoBehaviour
 
     private IEnumerator SetHitState()
     {
-        enemyModel.SetChaseState(false);
-        yield return null;
-
-        enemyModel.SetAnimState(EnemyState.Hit);        
+        enemyModel.SetChaseState(false, EnemyState.Hit);
         float hitTime = enemyModel.GetVATAnimator().GetAnimationTime((int)EnemyState.Hit);
-
+        
         yield return new WaitForSeconds(hitTime);
 
-        enemyModel.SetAnimState(EnemyState.Idle);
         col.enabled = true;
-        enemyModel.SetChaseState(true);
+        enemyModel.SetChaseState(true, EnemyState.Idle);
     }
 
     public EnemyGameData GetEnemyData()

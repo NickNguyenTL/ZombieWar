@@ -107,7 +107,7 @@ public class ChaserSystem: MonoBehaviour
 
     public void StartChasing()
     {
-        if (agent != null)
+        if (agent != null && target != null)
         {
             agent.isStopped = false;
             IsChasing = true;
@@ -116,7 +116,7 @@ public class ChaserSystem: MonoBehaviour
 
     public void StopChasing()
     {
-        if (agent != null && IsChasing)
+        if (agent != null)
         {
             agent.isStopped = true;
             IsChasing = false;

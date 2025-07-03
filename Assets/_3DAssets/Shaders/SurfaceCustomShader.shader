@@ -84,20 +84,27 @@ Shader "Custom/SurfaceCustomShader" {
     {
         if(_VertexCount <= 0 || _FrameCount <= 0)  
         {  
-            // If VAT counts are not set, just return the original vertex position  
             return;  
         }
         float vertexIndex = v.texcoord1.x;
         float currentFrame = UNITY_ACCESS_INSTANCED_PROP(Props, _CurrentFrame);
-        float2 vatUV;
-        vatUV.x = (vertexIndex + 0.5) / _VertexCount;
-        vatUV.y = (currentFrame + 0.5) / _FrameCount;
 
-        float3 normPos = tex2Dlod(_VATTex, float4(vatUV, 0, 0)).rgb;
-        float3 animatedPos = lerp(_AABBMin, _AABBMax, normPos);
+        // Calculate frame indices and blend factor
+        float frame0 = floor(currentFrame);
+        float frame1 = min(frame0 + 1, _FrameCount - 1); // Clamp to max frame
+        float t = currentFrame - frame0;
+
+        float2 vatUV0 = float2((vertexIndex + 0.5) / _VertexCount, (frame0 + 0.5) / _FrameCount);
+        float2 vatUV1 = float2((vertexIndex + 0.5) / _VertexCount, (frame1 + 0.5) / _FrameCount);
+
+        float3 normPos0 = tex2Dlod(_VATTex, float4(vatUV0, 0, 0)).rgb;
+        float3 normPos1 = tex2Dlod(_VATTex, float4(vatUV1, 0, 0)).rgb;
+
+        float3 animatedPos = lerp(_AABBMin, _AABBMax, lerp(normPos0, normPos1, t));
 
         v.vertex.xyz = animatedPos;
     }
+
 
     void surf (Input IN, inout SurfaceOutputStandard o) 
     {

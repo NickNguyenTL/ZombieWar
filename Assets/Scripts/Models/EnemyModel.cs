@@ -28,19 +28,9 @@ public class EnemyModel : MonoBehaviour
     [SerializeField]
     private VAT_Animator vatAnimator;
     [SerializeField]
-    private bool InitOnStart;
-    [SerializeField]
     private EnemyState InitState;
 
     private EnemyState enemyState;
-
-    private void Start()
-    {
-        if (InitOnStart)
-        {
-            Init();
-        }
-    }
 
     public void Init(Transform target = null, EnemyData newData = null)
     {
@@ -95,19 +85,20 @@ public class EnemyModel : MonoBehaviour
     }
     #endregion
 
-    public void SetChaseState(bool isChasing)
+    public void SetChaseState(bool isChasing, EnemyState transitionTo)
     {
         if (chaserSystem != null)
         {
             if(isChasing)
             {
                 chaserSystem.StartChasing();
-                SetChaseStateAnim(true);
             }
             else
             {
-                chaserSystem.StopChasing();                
-            }            
+                chaserSystem.StopChasing();
+            }
+
+            SetAnimState(transitionTo);
         }
     }
 
@@ -115,11 +106,13 @@ public class EnemyModel : MonoBehaviour
     {
         if (isChasing)
         {
-            SetAnimState(EnemyState.Chase);
+            if(enemyState == EnemyState.Idle)
+                SetAnimState(EnemyState.Chase);
         }
         else
         {
-            SetAnimState(EnemyState.Idle);
+            if (enemyState != EnemyState.Idle)
+                SetAnimState(EnemyState.Idle);
         }
     }
 

@@ -104,7 +104,7 @@ public class PlayerControl : MonoBehaviour
             if (enemyControl != null)
             {
                 enemyControl.TakeDamage(currentWeapon.Damage);
-                Debug.Log($"Attacking {enemyControl.name} with {currentWeapon.WeaponName}");
+                //Debug.Log($"Attacking {enemyControl.name} with {currentWeapon.WeaponName}");
                 fxSource.PlayFX(COMBAT_FX.ZOMBIE_HIT_BULLET, hit, 0.5f); // Play attack VFX
             }
             else
